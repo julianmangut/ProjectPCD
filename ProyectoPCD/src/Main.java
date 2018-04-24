@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 
-//Hola Juli
 public class Main {
 
 	public static int tam = 10;
