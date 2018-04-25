@@ -1,8 +1,5 @@
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class OilShip extends Ship {
-
 	/*
 	 * Maximum quantity of water that can carry a OilShip.
 	 */
@@ -104,8 +101,10 @@ public class OilShip extends Ship {
 	 * @see Ship#run()
 	 */
 	public void run() {
-
+		
 		Platform platform = Platform.getInstance();
+		OilHose oilHose = new OilHose(this);
+		WaterHose waterHose = new WaterHose(this);
 
 		super.run();
 
