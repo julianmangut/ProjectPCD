@@ -103,6 +103,7 @@ public class OilShip extends Ship {
 	public void run() {
 		
 		Platform platform = Platform.getInstance();
+		Server server = new Server();
 		OilHose oilHose = new OilHose(this);
 		WaterHose waterHose = new WaterHose(this);
 
@@ -119,13 +120,15 @@ public class OilShip extends Ship {
 		platform.stop.release();
 
 		while (getOilContainer() < maxOil) {
-			platform.getOil(this);
+			server.executeOilFill(oilHose);
 		}
 
 		while (getWaterContainer() < maxWater) {
-			platform.getWater(this);
+			server.executeWaterFill(waterHose);
 		}
 
+		server.endServer();
+		
 		this.setDirection(2);
 		super.run();
 	}

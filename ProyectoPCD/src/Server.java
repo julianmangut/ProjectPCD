@@ -6,11 +6,14 @@ public class Server {
 	private ThreadPoolExecutor executor;
 	
 	public Server () {
-		executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
+		executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 	}
 
-	public void executeTask (OilHose oilHose, WaterHose waterHose) {
+	public void executeOilFill (OilHose oilHose) {
 		executor.execute(oilHose);
+	}
+	
+	public void executeWaterFill (WaterHose waterHose) {
 		executor.execute(waterHose);
 	}
 	
