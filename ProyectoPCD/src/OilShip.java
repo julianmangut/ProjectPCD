@@ -31,8 +31,6 @@ public class OilShip extends Ship {
 
 	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 
-	CountDownLatch controlPasar = new CountDownLatch(4);
-
 	/*
 	 * OilShip parameterized constructor
 	 * 
@@ -115,8 +113,8 @@ public class OilShip extends Ship {
 		super.run();
 
 		try {
-			controlPasar.countDown();
-			controlPasar.await();
+			platform.controlPasar.countDown();
+			platform.controlPasar.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
