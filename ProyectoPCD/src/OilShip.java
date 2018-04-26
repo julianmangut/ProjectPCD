@@ -1,3 +1,5 @@
+import java.util.concurrent.CountDownLatch;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -26,8 +28,10 @@ public class OilShip extends Ship {
 	 * Platform where the OilShip is going to work.
 	 */
 	private int oilPlatform;
-	
+
 	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+
+	CountDownLatch controlPasar = new CountDownLatch(5);
 
 	/*
 	 * OilShip parameterized constructor
@@ -105,6 +109,7 @@ public class OilShip extends Ship {
 	 * @see Ship#run()
 	 */
 	public void run() {
+
 		Platform platform = Platform.getInstance();
 		Server server = new Server();
 		OilHose oilHose = new OilHose(this);
@@ -113,25 +118,22 @@ public class OilShip extends Ship {
 		super.run();
 
 		try {
-			if (platform.stop.getQueueLength() < 4) {
-				platform.stop.acquire();
-			}
+			controlPasar.countDown();
+			controlPasar.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		platform.stop.release();
-
 		while (getOilContainer() < maxOil) {
-			executor.execute(new Task(0, this));
+			server.executeOilFill(oilHose);
 		}
 
 		while (getWaterContainer() < maxWater) {
-			executor.execute(new Task(1, this));
+			server.executeWaterFill(waterHose);
 		}
 
 		server.endServer();
-		
+
 		this.setDirection(2);
 		super.run();
 	}
