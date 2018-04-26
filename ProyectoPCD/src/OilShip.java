@@ -31,7 +31,7 @@ public class OilShip extends Ship {
 
 	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 
-	CountDownLatch controlPasar = new CountDownLatch(5);
+	CountDownLatch controlPasar = new CountDownLatch(4);
 
 	/*
 	 * OilShip parameterized constructor
