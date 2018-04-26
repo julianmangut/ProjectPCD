@@ -1,3 +1,4 @@
+import java.util.concurrent.CountDownLatch;
 
 public class OilShip extends Ship {
 	/*
@@ -24,6 +25,8 @@ public class OilShip extends Ship {
 	 * Platform where the OilShip is going to work.
 	 */
 	private int oilPlatform;
+
+	CountDownLatch controlPasar = new CountDownLatch(5);
 
 	/*
 	 * OilShip parameterized constructor
@@ -101,7 +104,7 @@ public class OilShip extends Ship {
 	 * @see Ship#run()
 	 */
 	public void run() {
-		
+
 		Platform platform = Platform.getInstance();
 		Server server = new Server();
 		OilHose oilHose = new OilHose(this);
@@ -110,14 +113,11 @@ public class OilShip extends Ship {
 		super.run();
 
 		try {
-			if (platform.stop.getQueueLength() < 4) {
-				platform.stop.acquire();
-			}
+			controlPasar.countDown();
+			controlPasar.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-		platform.stop.release();
 
 		while (getOilContainer() < maxOil) {
 			server.executeOilFill(oilHose);
@@ -128,7 +128,7 @@ public class OilShip extends Ship {
 		}
 
 		server.endServer();
-		
+
 		this.setDirection(2);
 		super.run();
 	}
