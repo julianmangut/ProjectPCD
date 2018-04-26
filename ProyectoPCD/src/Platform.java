@@ -154,4 +154,42 @@ public class Platform {
 		System.out.println("THE CONTAINERS HAVE BEEN REFILLED <-----------------------------------");
 
 	}
+	
+	public void getOil(OilShip ship) {
+		if (oilContainers[ship.getOilPlatform()] != 0) {
+			oilContainers[ship.getOilPlatform()] = 0;
+			ship.setOilContainer(ship.getOilContainer() + maxTake);
+			System.out.println("The OilShip number: " + ship.getId() + " and platform number: " + ship.getOilPlatform()
+					+ " have take OIL and the quantity is: " + ship.getOilContainer());
+
+			try {
+				if (oilContainers[ship.getOilPlatform()] == 0)
+					barrera.await();
+			} catch (InterruptedException | BrokenBarrierException e) {
+				e.printStackTrace();
+			}
+
+			try {
+				controlFiller.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (controlOilContainers() == true)
+				filler();
+			controlFiller.release();
+		}
+	}
+
+	public void getWater(OilShip ship) {
+		try {
+			control.acquire();
+			ship.setWaterContainer(ship.getWaterContainer() + maxTake);
+			System.out.println("The OilShip number: " + ship.getId() + " and platform number: " + ship.getOilPlatform()
+					+ " have take WATER and the quantity that have is: " + ship.getWaterContainer());
+
+			control.release();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 }
