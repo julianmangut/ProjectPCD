@@ -1,7 +1,9 @@
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -50,6 +52,8 @@ public class Platform {
 	final Semaphore stop = new Semaphore(0);
 
 	CountDownLatch controlPasar = new CountDownLatch(5);
+	
+	ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
 	// Get Instance create for apply the Singleton
 	public synchronized static Platform getInstance() {

@@ -1,5 +1,4 @@
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Semaphore;
 
 public class OilShip extends Ship {
 	/*
@@ -26,8 +25,8 @@ public class OilShip extends Ship {
 	 * Platform where the OilShip is going to work.
 	 */
 	private int oilPlatform;
-
-	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+	
+	final Semaphore canExit = new Semaphore(1);
 
 	/*
 	 * OilShip parameterized constructor
@@ -117,15 +116,18 @@ public class OilShip extends Ship {
 			e.printStackTrace();
 		}
 
-		while (getOilContainer() < maxOil) {
-			executor.execute(new Task(0, this));
-		}
+		platform.executor.execute(new OilHose(this));
 
-		while (getWaterContainer() < maxWater) {
-			executor.execute(new Task(1, this));
-		}
+		platform.executor.execute(new WaterHose(this));
 
-		executor.shutdown();
+		platform.executor.shutdown();
+		
+		try {
+			canExit.acquire();
+			canExit.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 		this.setDirection(2);
 		super.run();
