@@ -105,7 +105,7 @@ public class OilShip extends Ship {
 	 * @see Ship#run()
 	 */
 	public void run() {
-		
+		//quier
 		Platform platform = Platform.getInstance();
 		Server server = new Server();
 		OilHose oilHose = new OilHose(this);
