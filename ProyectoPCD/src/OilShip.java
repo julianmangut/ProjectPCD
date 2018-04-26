@@ -1,5 +1,3 @@
-import java.util.concurrent.CountDownLatch;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -120,13 +118,15 @@ public class OilShip extends Ship {
 		}
 
 		while (getOilContainer() < maxOil) {
-			platform.getOil(this);
+			executor.execute(new Task(0, this));
 		}
 
 		while (getWaterContainer() < maxWater) {
-			platform.getWater(this);
+			executor.execute(new Task(1, this));
 		}
 
+		executor.shutdown();
+		
 		this.setDirection(2);
 		super.run();
 	}

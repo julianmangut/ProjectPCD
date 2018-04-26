@@ -4,9 +4,8 @@ public class Task implements Runnable {
 
 	static final Integer maxContainers = 1000;
 	static final Integer maxTake = 1000;
-	private int task;
 	
-	Integer oilContainer;
+	private int task;
 	
 	OilShip ship;
 	
@@ -19,14 +18,14 @@ public class Task implements Runnable {
 		Platform platform = Platform.getInstance();
 		
 		if (task == 0) {
-			if (oilContainer != 0) {
-				oilContainer = 0;
+			if (platform.oilContainers[ship.getOilPlatform()] != 0) {
+				platform.oilContainers[ship.getOilPlatform()] = 0;
 				ship.setOilContainer(ship.getOilContainer() + maxTake);
 				System.out.println("The OilShip number: " + ship.getId() + " and platform number: " + ship.getOilPlatform()
 						+ " have take OIL and the quantity is: " + ship.getOilContainer());
 
 				try {
-					if (oilContainer == 0)
+					if (platform.oilContainers[ship.getOilPlatform()] == 0)
 						platform.barrera.await();
 				} catch (InterruptedException | BrokenBarrierException e) {
 					e.printStackTrace();
