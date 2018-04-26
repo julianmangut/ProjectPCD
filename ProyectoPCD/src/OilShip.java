@@ -1,3 +1,5 @@
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class OilShip extends Ship {
 	/*
@@ -24,6 +26,8 @@ public class OilShip extends Ship {
 	 * Platform where the OilShip is going to work.
 	 */
 	private int oilPlatform;
+	
+	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 
 	/*
 	 * OilShip parameterized constructor
