@@ -1,9 +1,8 @@
-<<<<<<< HEAD
+
 import java.util.concurrent.CountDownLatch;
-=======
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
->>>>>>> branch 'master' of https://github.com/julianmangut/ProjectPCD.git
 
 public class OilShip extends Ship {
 	/*
@@ -30,7 +29,7 @@ public class OilShip extends Ship {
 	 * Platform where the OilShip is going to work.
 	 */
 	private int oilPlatform;
-	
+
 	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 
 	CountDownLatch controlPasar = new CountDownLatch(5);
