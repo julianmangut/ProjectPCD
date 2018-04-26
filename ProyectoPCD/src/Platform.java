@@ -1,4 +1,5 @@
 import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
@@ -47,6 +48,8 @@ public class Platform {
 	final Semaphore control = new Semaphore(1);
 	final Semaphore controlFiller = new Semaphore(1);
 	final Semaphore stop = new Semaphore(0);
+
+	CountDownLatch controlPasar = new CountDownLatch(5);
 
 	// Get Instance create for apply the Singleton
 	public synchronized static Platform getInstance() {
