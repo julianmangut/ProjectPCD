@@ -51,6 +51,8 @@ public class Platform {
 
 	CountDownLatch controlPasar = new CountDownLatch(5);
 
+	// HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
 	// Get Instance create for apply the Singleton
 	public synchronized static Platform getInstance() {
 		if (platformS == null)
