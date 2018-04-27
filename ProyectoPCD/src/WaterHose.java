@@ -28,6 +28,6 @@ public class WaterHose implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		ship.canExit.release();
+		ship.canExit.countDown();
 	}
 }

@@ -1,3 +1,5 @@
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Semaphore;
 
 public class OilShip extends Ship {
@@ -25,8 +27,8 @@ public class OilShip extends Ship {
 	 * Platform where the OilShip is going to work.
 	 */
 	private int oilPlatform;
-	
-	final Semaphore canExit = new Semaphore(1);
+
+	CountDownLatch canExit = new CountDownLatch(2);
 
 	/*
 	 * OilShip parameterized constructor
@@ -119,16 +121,13 @@ public class OilShip extends Ship {
 		platform.executor.execute(new OilHose(this));
 
 		platform.executor.execute(new WaterHose(this));
-
-		platform.executor.shutdown();
 		
 		try {
-			canExit.acquire();
-			canExit.acquire();
+			canExit.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+		platform.executor.shutdown();
 		this.setDirection(2);
 		super.run();
 	}

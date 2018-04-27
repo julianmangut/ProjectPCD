@@ -41,6 +41,6 @@ public class OilHose implements Runnable {
 				platform.controlFiller.release();
 			}
 		}
-		ship.canExit.release();
+		ship.canExit.countDown();
 	}
 }
