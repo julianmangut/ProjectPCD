@@ -16,11 +16,7 @@ public class Crane implements Runnable {
 		Platform pt = Platform.getInstance();
 
 		while (!pt.isNoMore()) {
-			try {
-				pt.get(type);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			pt.get(type);
 		}
 	}
 }

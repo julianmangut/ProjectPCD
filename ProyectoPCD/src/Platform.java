@@ -1,12 +1,11 @@
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Platform {
 
@@ -16,15 +15,9 @@ public class Platform {
 	private static Platform platformS = null; // Singleton variable
 
 	/*
-	 * Variable that control if a container is in the plarform, is True if there is
-	 * a product on the platform or False if not.
-	 */
-	boolean containerInside = false;
-
-	/*
 	 * It is the type of product on the platform.
 	 */
-	product typeContainer;
+	product typeContainer = null;
 
 	/*
 	 * Variable that control if the Merchant have more products to put, True when
@@ -39,12 +32,7 @@ public class Platform {
 	// CyclicBarrier structure that allow us to wait all threads.
 	CyclicBarrier barrera = new CyclicBarrier(5);
 
-	// Lock and conditions of the monitor.
-	final Lock lock = new ReentrantLock();
-	final Condition emptySalt = lock.newCondition();
-	final Condition emptySugar = lock.newCondition();
-	final Condition emptyFlour = lock.newCondition();
-	final Condition full = lock.newCondition();
+	final BlockingQueue <product> containerInPlatform = new SynchronousQueue <> ();
 
 	// Semaphores for control.
 	final Semaphore control = new Semaphore(1);
@@ -66,6 +54,10 @@ public class Platform {
 		this.filler();
 	}
 
+	public boolean isAnythingInside () {
+		return (typeContainer != null);
+	}
+	
 	public boolean isNoMore() {
 		return noMore;
 	}
@@ -88,71 +80,29 @@ public class Platform {
 		return empty;
 	}
 
-	public void put(product content) throws InterruptedException {
-		lock.lock();
-
+	public void put (product content) {
+		System.out.println("Leaving " + content.toString());
+		typeContainer = content;
 		try {
-			while (containerInside) {
-				full.await();
-			}
-			containerInside = true;
-			typeContainer = content;
-			System.out.println("Leaving " + content.toString());
-
-			switch (typeContainer) {
-			case flour:
-				emptyFlour.signal();
-				break;
-			case sugar:
-				emptySugar.signal();
-				break;
-			case salt:
-				emptySalt.signal();
-				break;
-			}
-		} finally {
-			lock.unlock();
+			containerInPlatform.put(content);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
+	}
+	
+	public void get (product type) {
+		if (type == typeContainer) {
+			try {
+				 if (!isNoMore()) {
+					System.out.println("Getting " + containerInPlatform.take().toString());
+					typeContainer = null;
+				 }
+	        } catch (InterruptedException ie) {
+	            ie.printStackTrace();
+	        }
 		}
 	}
-
-	public void get(product type) throws InterruptedException {
-		lock.lock();
-
-		try {
-			while ((typeContainer != type || !containerInside) && !isNoMore()) {
-				switch (type) {
-				case flour:
-					emptyFlour.await();
-					break;
-				case sugar:
-					emptySugar.await();
-					break;
-				case salt:
-					emptySalt.await();
-					break;
-				}
-			}
-
-			if (!isNoMore() || containerInside) {
-				containerInside = false;
-				typeContainer = null;
-				System.out.println("Getting " + type.toString());
-			}
-
-			if (isNoMore()) {
-				emptyFlour.signal();
-				emptySalt.signal();
-				emptySugar.signal();
-			}
-
-			full.signal();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			lock.unlock();
-		}
-	}
-
+	
 	public synchronized void filler() {
 
 		for (int i = 0; i < oilContainers.length; i++) {

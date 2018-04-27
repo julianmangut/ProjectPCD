@@ -29,15 +29,12 @@ public class Merchant extends Ship {
 		Random delete = new Random();
 
 		while (!containers.isEmpty()) {
-			try {
+			if (!pt.isAnythingInside())
 				pt.put(containers.remove(delete.nextInt(containers.size())));
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 		pt.setNoMore(true);
 
 		this.setDirection(2);
 		super.run();
-	}
+	}	
 }
